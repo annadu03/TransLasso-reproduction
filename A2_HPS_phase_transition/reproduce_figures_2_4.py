@@ -1,23 +1,3 @@
-#!/usr/bin/env python3
-"""Reproduce Yang et al. (2025), Figures 2(a,b) and 4(a,b).
-
-Run all four figures:
-    python3 reproduce_figures_2_4.py
-
-Run one figure or change the Monte Carlo sample count:
-    python3 reproduce_figures_2_4.py --figures 2b --reps 10
-
-The four experiments use the parameter grids in FIGURES below.
-Theoretical curves: Theorem 3 (Figure 2) and Theorem 10 (Figure 4).
-Simulation results: direct Monte Carlo, author-style bias+MC variance,
-and the exact finite-sample conditional mean risk.
-
-NOTE: lambda is the FEATURE scaling used by the author notebooks, not
-necessarily the covariance-eigenvalue lambda in the paper's prose.
-Here Sigma_source has eigenvalues lambda**2 and lambda**(-2), while
-Sigma_target = I. See README.md.
-"""
-
 import argparse
 import math
 from pathlib import Path
@@ -30,10 +10,7 @@ import pandas as pd
 from scipy.linalg import cho_factor, cho_solve
 from scipy.optimize import brentq
 
-
-# ============================================================
-# 1. Experiment settings -- edit only here to change the grid
-# ============================================================
+# 1. Experiment settings 
 SIGMA = 0.5
 SEED = 2026
 DEFAULT_REPS = 40
@@ -61,10 +38,7 @@ FIGURES = {
 }
 # Each setting is (n2, p, lambda, mu).
 
-
-# ============================================================
 # 2. High-dimensional theory
-# ============================================================
 def source_feature_scales(p, lam):
     """X1 = Z1 @ diag(scales); X2 = Z2 (Target covariance = I)."""
     if p % 2 != 0:
@@ -144,9 +118,7 @@ def theoretical_risk(fig, n1, n2, p, lam, mu):
     return variance + bias
 
 
-# ============================================================
 # 3. Finite-dimensional Monte Carlo simulation
-# ============================================================
 def simulate_one_setting(n1_grid, n2, p, lam, mu, reps, noise_trials, rng):
     """Estimate Target excess risk on the same X for three methods.
 
@@ -228,9 +200,7 @@ def simulate_one_setting(n1_grid, n2, p, lam, mu, reps, noise_trials, rng):
     return pd.DataFrame(rows)
 
 
-# ============================================================
 # 4. Plotting and saving results
-# ============================================================
 def grid(max_n1, step):
     return list(range(0, max_n1 + 1, step))
 
